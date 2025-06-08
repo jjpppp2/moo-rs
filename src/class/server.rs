@@ -1,7 +1,7 @@
 use crate::class::player;
 
 use super::player::Player;
-use hashbrown::HashMap;
+use dashmap::DashMap;
 use futures::StreamExt;
 use tokio::net::TcpStream;
 use tokio_tungstenite::WebSocketStream;
@@ -9,14 +9,14 @@ use tungstenite::Message;
 
 pub struct Server {
     pub ids: u64,
-    pub players: HashMap<u64, WebSocketStream<TcpStream>>,
+    pub players: DashMap<u64, WebSocketStream<TcpStream>>,
     tick: u64,
 }
 
 impl Server {
     pub fn new() -> Self {
         Self {
-            players: HashMap::new(),
+            players: DashMap::new(),
             tick: 0,
             ids: 0,
         }

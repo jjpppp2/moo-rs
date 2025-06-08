@@ -4,12 +4,16 @@ use std::io::Write;
 use tokio::net::{TcpListener, TcpStream};
 use tokio_tungstenite::accept_async;
 use tokio_tungstenite::tungstenite::Message;
-use tracing::{Level, debug, error, info, span, warn};
+use tracing::info;
 use tracing_subscriber::prelude::*;
-use tracing_tree::HierarchicalLayer;
+
+mod class;
+use class::Server;
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 4)]
 async fn main() {
+    let server = Server::new();
+
     print!("\x1B[2J\x1B[1;1H");
 
     //tracing_subscriber::registry().with(HierarchicalLayer::new(2).with_indent_lines(true).with_targets(true)).init();
@@ -43,7 +47,7 @@ async fn handle_conn(stream: TcpStream) {
         }
     };
 
-    let (mut write, mut read) = ws.split();
+    let (write, mut read) = ws.split();
     while let Some(msg) = read.next().await {
         match msg {
             Ok(Message::Text(text)) => {
