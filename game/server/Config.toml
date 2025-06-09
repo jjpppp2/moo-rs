@@ -1,0 +1,8 @@
+[server]
+address = "127.0.0.1:8080"
+ip_log_path = "ips.log"
+
+[client]
+
+[game]
+update_interval = 103 # mess with the scripters, this will annoy them

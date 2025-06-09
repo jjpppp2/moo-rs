@@ -1,16 +1,18 @@
 [package]
-name = "shit"
-version = "0.1.0"
+name = "drip_io_server"
+version = "1.0.0"
 edition = "2024"
 
 [dependencies]
 bincode = "2.0.1"
 dashmap = "6.1.0"
 futures = "0.3.31"
+rand = "0.9.1"
 rayon = "1.10.0"
-serde = "1.0.219"
+serde = { version = "*", features = ["derive"] }
 tokio = { version = "1.45.1", features = ["full"] }
 tokio-tungstenite = "0.26.2"
+toml = "0.8.23"
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3", features = ["fmt", "ansi"] }
 tracing-tree = "0.4.0"
