@@ -8,6 +8,7 @@ use tokio_tungstenite::accept_async;
 use tokio_tungstenite::tungstenite::Message;
 use tracing::info;
 use tokio::time::{sleep, Duration};
+use serde::Deserialize;
 
 mod class;
 use class::Server;
@@ -75,12 +76,27 @@ async fn handle_conn(server: Arc<Mutex<Server>>, stream: TcpStream, addr: std::n
     {
         let mut server_lock = server.lock().await;
         tracing::info!("adding player for {}, id: {}", addr, server_lock.instance_id);
-        server_lock.add(write);
+        server_lock.add(write).await;
     }
+
     while let Some(msg) = read.next().await {
         match msg {
             Ok(Message::Text(text)) => {
-                println!("woahh {}", text);
+                let data: IncomingPackets = match serde_json::from_str(&text) {
+                    Ok(v) => v,
+                    Err(_) => {
+                        info!("Failed to deserialize incoming message");
+                        return;
+                    }
+                };
+
+                match data {
+                    IncomingPackets::Spawn(data) => {
+                        info!("woahhh {}", data.name);
+                    }
+
+                    _ => {}
+                }
             }
 
             _ => {}
@@ -97,4 +113,20 @@ fn log_ip_to_file(ip: String) -> std::io::Result<()> {
     writeln!(file, "Client connected: {}", ip)?;
     file.flush()?;
     Ok(())
+}
+
+// packets
+#[derive(Deserialize)]
+#[serde(tag = "type", content = "data")]
+enum IncomingPackets {
+    Spawn(SpawnPacket),
+    Move,
+    Aim,
+    Hit,
+    Place,
+}
+
+#[derive(Deserialize)]
+struct SpawnPacket {
+    name: String
 }
