@@ -1,8 +1,13 @@
+use std::ffi::NulError;
+
+
+#[derive(Debug)]
 pub struct Player {
-    id: u64,
+    pub id: u64,
     name: String,
     x: u32,
     y: u32,
+    moveDir: Option<i8>,
 }
 
 impl Player {
@@ -12,8 +17,7 @@ impl Player {
             name: name,
             x: x,
             y: y,
+            moveDir: None
         }
     }
-
-    
 }

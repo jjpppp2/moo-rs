@@ -1,11 +1,13 @@
+use std::ops::Deref;
+
 use crate::class::player;
 
 use super::player::Player;
 use dashmap::DashMap;
+use futures::{SinkExt, stream::SplitSink};
 use tokio::net::TcpStream;
+use tokio::time::{Duration, sleep};
 use tokio_tungstenite::WebSocketStream;
-use tokio::time::{sleep, Duration};
-use futures::stream::SplitSink;
 use tokio_tungstenite::tungstenite::Message;
 
 pub struct Server {
@@ -14,7 +16,7 @@ pub struct Server {
     pub players: Vec<Player>,
     tick: u64,
     pub region: String,
-    pub instance_id: u64
+    pub instance_id: u64,
 }
 
 impl Server {
@@ -29,10 +31,12 @@ impl Server {
         }
     }
 
-    pub fn add(&mut self, ws_writer: SplitSink<WebSocketStream<TcpStream>, Message>) {
+    pub async fn add(&mut self, mut ws_writer: SplitSink<WebSocketStream<TcpStream>, Message>) {
         self.ids += 1;
 
-        let player = Player::new(self.ids, String::from("BISMILLAH"), 0, 0);
+        let player = Player::new(self.ids, String::from("awds"), 0, 0);
+
+        let _ = ws_writer.send(Message::Text("sano".into())).await;
 
         self.playerWS.insert(self.ids, ws_writer);
         self.players.push(player);
@@ -46,18 +50,28 @@ impl Server {
         }
     }*/
 
-    pub async fn update(&mut self) {
-        self.tick += 1;
-        println!("{} tick. players {}, id: {}", self.tick, self.playerWS.len(), self.instance_id);
+    pub fn get_player_by_id(&self, id: &u64) -> Option<&Player> {
+        self.players.iter().find(|&x| x.id == *id)
     }
-}
 
-enum IncomingPackets {
-    Spawn,
-    Move,
-    Aim,
-    Hit,
-    Place,
+    pub async fn update(&mut self) {
+        //self.tick += 1;
+        //println!("{} tick. players {}, id: {}", self.tick, self.playerWS.len(), self.instance_id);
+
+        let ids: Vec<u64> = self.playerWS.iter().map(|e| *e.key()).collect();
+        for id in ids {
+            let player = self.get_player_by_id(&id);
+
+            if let Some(mut ws_writer) = self.playerWS.get_mut(&id) {
+                match player {
+                    Some(player) => {
+                        let _ = ws_writer.send(Message::Text("sndaodsiosdan".into())).await;
+                    }
+                    None => {}
+                }
+            }
+        }
+    }
 }
 
 enum OutgoingPackets {
