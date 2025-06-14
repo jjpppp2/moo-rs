@@ -1,0 +1,3 @@
+cargo watch -x 'build --target wasm32-unknown-unknown'
+
+miniserve .

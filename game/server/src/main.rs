@@ -1,17 +1,23 @@
-use futures::{SinkExt, StreamExt};
+use bincode::Decode;
+use futures::StreamExt;
+use futures::task::Spawn;
+use serde::{Deserialize, Serialize};
+use serde_json::to_string;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::sync::Arc;
 use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::Mutex;
+use tokio::time::{Duration, sleep};
 use tokio_tungstenite::accept_async;
 use tokio_tungstenite::tungstenite::Message;
-use tracing::info;
-use tokio::time::{sleep, Duration};
-use serde::Deserialize;
+use tracing::{info, warn};
 
 mod class;
 use class::Server;
+
+mod packets;
+use packets::*;
 
 use crate::config::Config;
 mod config;
@@ -26,8 +32,8 @@ async fn main() {
         .init();
 
     let server = Arc::new(Mutex::new(Server::new()));
-    let config = Config::load("../Config.toml");
-    let listener = TcpListener::bind("127.0.0.1:8080").await.unwrap();
+    let _config = Config::load("../Config.toml");
+    let listener = TcpListener::bind("127.0.0.1:8089").await.unwrap();
 
     tracing::info!("{} Server started. ", server.lock().await.region);
 
@@ -73,30 +79,60 @@ async fn handle_conn(server: Arc<Mutex<Server>>, stream: TcpStream, addr: std::n
     };
 
     let (write, mut read) = ws.split();
-    {
-        let mut server_lock = server.lock().await;
-        tracing::info!("adding player for {}, id: {}", addr, server_lock.instance_id);
-        server_lock.add(write).await;
-    }
+    /*
+        {
+            let mut server_lock = server.lock().await;
+            tracing::info!(
+                "adding player for {}, id: {}",
+                addr,
+                server_lock.instance_id
+            );
+            server_lock.add(write, String::from("bsoias")).await;
+        }
+    */
 
+    let bincode_settings_standard = bincode::config::standard();
     while let Some(msg) = read.next().await {
         match msg {
-            Ok(Message::Text(text)) => {
-                let data: IncomingPackets = match serde_json::from_str(&text) {
-                    Ok(v) => v,
-                    Err(_) => {
-                        info!("Failed to deserialize incoming message");
-                        return;
-                    }
-                };
+            Ok(Message::Binary(binary)) => {
+                info!("waaa");
 
-                match data {
-                    IncomingPackets::Spawn(data) => {
-                        info!("woahhh {}", data.name);
+                let (packet_type, _): (IncomingPackets, usize) =
+                    match bincode::decode_from_slice(&binary, bincode_settings_standard) {
+                        Ok(v) => v,
+                        Err(err) => {
+                            println!("bad err {:?}", err);
+                            continue;
+                        }
+                    };
+
+                info!("waaa");
+
+                match packet_type {
+                    IncomingPackets::Spawn(SpawnPacket { name }) => {
+                        info!(
+                            "adding player for {}",
+                            addr
+                        );
+
+                        let mut server_lock = server.lock().await;
+                        info!(
+                            "adding player for {}, id: {}",
+                            addr, server_lock.instance_id
+                        );
+                        server_lock.add(write, name).await;
+
+                        break;
                     }
 
-                    _ => {}
+                    _ => {
+                        info!("idk lol");
+                    }
                 }
+            }
+
+            Ok(Message::Text(txt)) => {
+                warn!("{}", txt);
             }
 
             _ => {}
@@ -113,20 +149,4 @@ fn log_ip_to_file(ip: String) -> std::io::Result<()> {
     writeln!(file, "Client connected: {}", ip)?;
     file.flush()?;
     Ok(())
-}
-
-// packets
-#[derive(Deserialize)]
-#[serde(tag = "type", content = "data")]
-enum IncomingPackets {
-    Spawn(SpawnPacket),
-    Move,
-    Aim,
-    Hit,
-    Place,
-}
-
-#[derive(Deserialize)]
-struct SpawnPacket {
-    name: String
 }
