@@ -1,0 +1,14 @@
+[package]
+name = "client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+notan = "0.13.0"
+gloo-net = "0.3"
+futures-util = "0.3.31"
+web-sys = "0.3.77"
+wasm-bindgen-futures = "0.4"
+wasm-bindgen = "0.2.100"
+log = "0.4"
+console_log = "1.0"
