@@ -1,1 +1,1 @@
-use super::Game;
+use super::Server;

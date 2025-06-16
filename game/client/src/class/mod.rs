@@ -1,5 +1,6 @@
-mod game;
-mod render;
+mod class;
+mod player;
+mod server;
+mod object;
 
-pub use game::Game;
-pub use render::RenderUtil;
+pub use server::Server;
