@@ -24,7 +24,7 @@ async fn main() {
         .init();
 
     let server = Arc::new(Mutex::new(Server::new()));
-    let listener = TcpListener::bind("127.0.0.1:8080").await.unwrap();
+    let listener = TcpListener::bind("0.0.0.0:8080").await.unwrap();
 
     tracing::info!("{} Server started. ", server.lock().await.region);
 
