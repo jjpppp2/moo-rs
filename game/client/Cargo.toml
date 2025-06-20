@@ -1,6 +1,9 @@
 [package]
-name = "client"
+name = "tribalcraft_client"
 version = "0.1.0"
+authors = ["javedpension"]
+license-file = "./LICENSE"
+keywords = ["tribalcraft", "moomoo", "meedy", "sploop", "arras", "poopoo"]
 edition = "2021"
 
 [dependencies]

@@ -4,7 +4,7 @@ use serde::Deserialize;
 #[derive(Deserialize, Debug, Decode, Clone)]
 pub enum IncomingPackets {
     AddPlayer(AddPlayerPacket),
-    SetID(SetIDPacket),
+    SetInit(SetInitPacket),
     RemovePlayer(RemovePlayerPacket),
     UpdatePlayers(UpdatePlayersPacket),
     AddBuilding,
@@ -16,8 +16,12 @@ pub enum IncomingPackets {
 }
 
 #[derive(Deserialize, Debug, Decode, Clone)]
-pub struct SetIDPacket {
+pub struct SetInitPacket {
+    pub is_mine: bool,
     pub id: u64,
+    pub x: f32,
+    pub y: f32,
+    pub name: String
 }
 
 #[derive(Deserialize, Debug, Decode, Clone)]

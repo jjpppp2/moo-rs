@@ -166,27 +166,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "drip_io_server"
-version = "1.0.0"
-dependencies = [
- "bincode",
- "dashmap",
- "futures",
- "rand",
- "rayon",
- "serde",
- "serde_json",
- "tokio",
- "tokio-tungstenite",
- "toml",
- "tracing",
- "tracing-subscriber",
- "tracing-tree",
- "tungstenite",
- "uuid",
-]
-
-[[package]]
 name = "either"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -524,6 +503,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "quadtree-f32"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b307586beecced7e50087d7e464f37a90507087a2960550ba1cb9aa953b3d346"
+
+[[package]]
 name = "quote"
 version = "1.0.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -660,6 +645,12 @@ checksum = "bf41e0cfaf7226dca15e8197172c295a782857fcb97fad1808a166870dee75a3"
 dependencies = [
  "serde",
 ]
+
+[[package]]
+name = "serial_int"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "296806719e18009f19a4ed508cb2b6a743dbe12b8f0f2386cd8b3eb1f93b2e9f"
 
 [[package]]
 name = "sha1"
@@ -905,6 +896,30 @@ dependencies = [
  "tracing-core",
  "tracing-log",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "tribalcraft_server"
+version = "1.0.0"
+dependencies = [
+ "bincode",
+ "dashmap",
+ "futures",
+ "futures-util",
+ "quadtree-f32",
+ "rand",
+ "rayon",
+ "serde",
+ "serde_json",
+ "serial_int",
+ "tokio",
+ "tokio-tungstenite",
+ "toml",
+ "tracing",
+ "tracing-subscriber",
+ "tracing-tree",
+ "tungstenite",
+ "uuid",
 ]
 
 [[package]]

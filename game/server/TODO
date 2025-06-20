@@ -1,3 +1,0 @@
-rewrite the incoming handling stuff in `main.rs` to use bincode instead of serde
-finish player update loop stuff in `server.rs`
-

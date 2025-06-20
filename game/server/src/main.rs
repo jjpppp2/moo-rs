@@ -1,14 +1,9 @@
-use bincode::Decode;
 use futures::StreamExt;
-use futures::task::Spawn;
-use serde::{Deserialize, Serialize};
-use serde_json::to_string;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::sync::Arc;
 use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::Mutex;
-use tokio::time::{Duration, sleep};
 use tokio_tungstenite::accept_async;
 use tokio_tungstenite::tungstenite::Message;
 use tracing::{info, warn};
@@ -18,9 +13,6 @@ use class::Server;
 
 mod packets;
 use packets::*;
-
-use crate::config::Config;
-mod config;
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 4)]
 async fn main() {
@@ -32,8 +24,7 @@ async fn main() {
         .init();
 
     let server = Arc::new(Mutex::new(Server::new()));
-    let _config = Config::load("../Config.toml");
-    let listener = TcpListener::bind("127.0.0.1:8089").await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:8080").await.unwrap();
 
     tracing::info!("{} Server started. ", server.lock().await.region);
 
@@ -79,17 +70,6 @@ async fn handle_conn(server: Arc<Mutex<Server>>, stream: TcpStream, addr: std::n
     };
 
     let (write, mut read) = ws.split();
-    /*
-        {
-            let mut server_lock = server.lock().await;
-            tracing::info!(
-                "adding player for {}, id: {}",
-                addr,
-                server_lock.instance_id
-            );
-            server_lock.add(write, String::from("bsoias")).await;
-        }
-    */
 
     let bincode_settings_standard = bincode::config::standard();
     while let Some(msg) = read.next().await {

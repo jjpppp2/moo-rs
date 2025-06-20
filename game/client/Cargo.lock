@@ -251,22 +251,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "client"
-version = "0.1.0"
-dependencies = [
- "bincode",
- "console_log",
- "futures-util",
- "gloo-net",
- "log",
- "notan",
- "serde",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
-]
-
-[[package]]
 name = "cmake"
 version = "0.1.54"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2262,6 +2246,22 @@ dependencies = [
  "indexmap",
  "toml_datetime",
  "winnow",
+]
+
+[[package]]
+name = "tribalcraft_client"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "console_log",
+ "futures-util",
+ "gloo-net",
+ "log",
+ "notan",
+ "serde",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
 ]
 
 [[package]]
