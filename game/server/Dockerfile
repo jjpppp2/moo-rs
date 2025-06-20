@@ -9,5 +9,5 @@ RUN cargo build --release
 FROM debian:bookworm-slim AS runner
 
 WORKDIR /app
-COPY --from=builder /app/target/release/example-rust /app/example-rust
-CMD ["/app/example-rust"]
+COPY --from=builder /app/target/release/tribalcraft_server /app/tribalcraft_server
+CMD ["/app/tribalcraft_server"]
