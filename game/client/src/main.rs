@@ -96,7 +96,7 @@ fn draw(app: &mut App, gfx: &mut Graphics, game: &mut Apps) {
 }
 
 fn init_websocket(app: &mut App, game: Arc<Mutex<Game>>) {
-    let ws = WebSocket::open("ws://localhost:8089"); //WebSocket::open("wss://grim-maude-jjpppp2-ca6ee7f1.koyeb.app/");
+    let ws = WebSocket::open("wss://grim-maude-jjpppp2-ca6ee7f1.koyeb.app/");
     let ws = match ws {
         Ok(ws) => ws,
         Err(err) => {
