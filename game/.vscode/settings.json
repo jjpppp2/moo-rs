@@ -1,0 +1,4 @@
+{
+    "rust-analyzer.cargo.target": "wasm32-unknown-unknown",
+    "rust-analyzer.diagnostics.disabled": ["E0107", "E0133"]
+}
